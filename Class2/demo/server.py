@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, make_response
+from flask import Flask, request, jsonify
 import json
 
 app = Flask(__name__)
@@ -10,19 +10,44 @@ def read_db():
         return json.load(f)
 
 
-@app.route("/books")
+def write_db(data):
+    with open(DB, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+
+@app.route("/books", methods=["GET"])
 def get_books():
+    return jsonify(read_db())
 
-    data = read_db()
 
-    response = make_response(jsonify(data))
-    response.headers["Cache-Control"] = "public, max-age=60"
+@app.route("/books", methods=["POST"])
+def create_book():
 
-    return response
+    books = read_db()
+    data = request.json
+
+    data["id"] = len(books) + 1
+    books.append(data)
+
+    write_db(books)
+
+    return jsonify(data), 201
+
+
+@app.route("/books/<int:id>", methods=["DELETE"])
+def delete_book(id):
+
+    books = read_db()
+
+    books = [b for b in books if b["id"] != id]
+
+    write_db(books)
+
+    return {"message": "deleted"}
 
 
 def main():
-    print("Server Cacheable running")
+    print("Server Uniform Interface running")
     app.run(debug=True)
 
 
