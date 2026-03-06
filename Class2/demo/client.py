@@ -1,12 +1,16 @@
 import requests
 
-URL = "http://127.0.0.1:5000/books"
 
-headers = {
-    "X-API-KEY": "123456"
-}
+def main():
 
-r = requests.get(URL, headers=headers)
+    url = "http://127.0.0.1:5000/books"
 
-print("Status:", r.status_code)
-print(r.json())
+    r = requests.get(url)
+
+    print("Status:", r.status_code)
+    print("Cache header:", r.headers.get("Cache-Control"))
+    print("Data:", r.json())
+
+
+if __name__ == "__main__":
+    main()
