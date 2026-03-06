@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "year": 2008,
+    "category": "Software Engineering",
+    "status": "Có sẵn"
+  },
+  {
+    "id": 2,
+    "title": "Design Patterns",
+    "author": "Erich Gamma",
+    "year": 1994,
+    "category": "Software Engineering",
+    "status": "Có sẵn"
+  },
+  {
+    "id": 3,
+    "title": "The Pragmatic Programmer",
+    "author": "Andrew Hunt",
+    "year": 1999,
+    "category": "Programming",
+    "status": "Đã mượn"
+  },
+  {
+    "id": 4,
+    "title": "Introduction to Algorithms",
+    "author": "Thomas H. Cormen",
+    "year": 2009,
+    "category": "Algorithms",
+    "status": "Có sẵn"
+  },
+  {
+    "id": 5,
+    "title": "Computer Networking: A Top-Down Approach",
+    "author": "James F. Kurose",
+    "year": 2017,
+    "category": "Networking",
+    "status": "Có sẵn"
+  }
+]
