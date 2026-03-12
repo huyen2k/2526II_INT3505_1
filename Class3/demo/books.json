@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "status": "Có sẵn"
+  },
+  {
+    "id": 2,
+    "title": "Design Patterns",
+    "author": "GoF",
+    "status": "Có sẵn"
+  }
+]
