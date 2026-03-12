@@ -3,69 +3,74 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 books = [
-    {"id": 1, "title": "Clean Code"},
-    {"id": 2, "title": "Design Patterns"},
-    {"id": 3, "title": "Refactoring"}
+    {"id": 1, "title": "Clean Code", "status": "Có sẵn"},
+    {"id": 2, "title": "Design Patterns", "status": "Có sẵn"}
 ]
 
 
-# GET danh sách sách (Extensible response)
-@app.route("/api/v1/books", methods=["GET"])
-def get_books():
-
-    page = int(request.args.get("page", 1))
-    limit = int(request.args.get("limit", 2))
-
-    start = (page - 1) * limit
-    end = start + limit
-
-    paginated_books = books[start:end]
-
-    response = {
-        "data": paginated_books,
-        "pagination": {
-            "page": page,
-            "limit": limit,
-            "total": len(books)
-        }
-    }
-
-    return jsonify(response), 200
-
-
-# GET một sách
+# GET /books/1
 @app.route("/api/v1/books/<int:book_id>", methods=["GET"])
 def get_book(book_id):
 
     for book in books:
         if book["id"] == book_id:
+            return jsonify({"data": book}), 200
+
+    return jsonify({"error": "Book not found"}), 404
+
+
+# PUT /books/1
+@app.route("/api/v1/books/<int:book_id>", methods=["PUT"])
+def update_book(book_id):
+
+    data = request.json
+
+    for book in books:
+        if book["id"] == book_id:
+
+            book["title"] = data["title"]
+            book["status"] = data["status"]
+
+            return jsonify({
+                "data": book,
+                "message": "Book updated"
+            }), 200
+
+    return jsonify({"error": "Book not found"}), 404
+
+
+# PATCH /books/1
+@app.route("/api/v1/books/<int:book_id>", methods=["PATCH"])
+def update_book_status(book_id):
+
+    data = request.json
+
+    for book in books:
+        if book["id"] == book_id:
+
+            book["status"] = data["status"]
 
             return jsonify({
                 "data": book
             }), 200
 
-    return jsonify({
-        "error": "Book not found"
-    }), 404
+    return jsonify({"error": "Book not found"}), 404
 
 
-# POST thêm sách
-@app.route("/api/v1/books", methods=["POST"])
-def create_book():
+# DELETE /books/1
+@app.route("/api/v1/books/<int:book_id>", methods=["DELETE"])
+def delete_book(book_id):
 
-    data = request.json
+    for book in books:
+        if book["id"] == book_id:
 
-    new_book = {
-        "id": len(books) + 1,
-        "title": data["title"]
-    }
+            books.remove(book)
 
-    books.append(new_book)
+            return jsonify({
+                "message": "Book deleted"
+            }), 200
 
-    return jsonify({
-        "data": new_book,
-        "message": "Book created"
-    }), 201
+    return jsonify({"error": "Book not found"}), 404
 
 
 if __name__ == "__main__":
