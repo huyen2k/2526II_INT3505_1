@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  title: Library API
+  version: 1.0.0
+
+paths:
+  /api/v1/books:
+    get:
+      summary: Get all books
+      responses:
+        "200":
+          description: OK
+
+    post:
+      summary: Create book
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookInput"
+      responses:
+        "201":
+          description: Created
+
+  /api/v1/books/{id}:
+    get:
+      summary: Get book by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+
+    put:
+      summary: Update book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated
+
+    delete:
+      summary: Delete book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        author:
+          type: string
+
+    BookInput:
+      type: object
+      properties:
+        title:
+          type: string
+        author:
+          type: string
