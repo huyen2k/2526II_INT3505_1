@@ -1,80 +1,151 @@
-openapi: 3.0.0
+swagger: "2.0"
 info:
   title: Library API
-  version: 1.0.0
+  version: "1.0.0"
+  description: API CRUD books using Flask + Flasgger
+
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
 
 paths:
   /api/v1/books:
     get:
+      tags:
+        - Books
       summary: Get all books
       responses:
-        "200":
-          description: OK
+        200:
+          description: List of books
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Book"
 
     post:
-      summary: Create book
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BookInput"
+      tags:
+        - Books
+      summary: Create a new book
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/BookInput"
       responses:
-        "201":
-          description: Created
+        201:
+          description: Created book
+          schema:
+            $ref: "#/definitions/Book"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "#/definitions/Error"
 
-  /api/v1/books/{id}:
+  /api/v1/books/{book_id}:
     get:
+      tags:
+        - Books
       summary: Get book by ID
       parameters:
-        - name: id
+        - name: book_id
           in: path
           required: true
-          schema:
-            type: integer
+          type: integer
       responses:
-        "200":
-          description: OK
+        200:
+          description: A book object
+          schema:
+            $ref: "#/definitions/Book"
+        404:
+          description: Book not found
+          schema:
+            $ref: "#/definitions/Error"
 
     put:
-      summary: Update book
+      tags:
+        - Books
+      summary: Update book by ID
       parameters:
-        - name: id
+        - name: book_id
           in: path
           required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
           schema:
-            type: integer
+            $ref: "#/definitions/BookInput"
       responses:
-        "200":
-          description: Updated
+        200:
+          description: Updated book
+          schema:
+            $ref: "#/definitions/Book"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Book not found
+          schema:
+            $ref: "#/definitions/Error"
 
     delete:
-      summary: Delete book
+      tags:
+        - Books
+      summary: Delete book by ID
       parameters:
-        - name: id
+        - name: book_id
           in: path
           required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Deleted
-
-components:
-  schemas:
-    Book:
-      type: object
-      properties:
-        id:
           type: integer
-        title:
-          type: string
-        author:
-          type: string
+      responses:
+        200:
+          description: Delete result
+          schema:
+            $ref: "#/definitions/Message"
+        404:
+          description: Book not found
+          schema:
+            $ref: "#/definitions/Error"
 
-    BookInput:
-      type: object
-      properties:
-        title:
-          type: string
-        author:
-          type: string
+definitions:
+  Book:
+    type: object
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      author:
+        type: string
+
+  BookInput:
+    type: object
+    required:
+      - title
+      - author
+    properties:
+      title:
+        type: string
+      author:
+        type: string
+
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+
+  Message:
+    type: object
+    properties:
+      message:
+        type: string
