@@ -1,0 +1,96 @@
+#%RAML 1.0
+title: Library API - RAML
+version: v1
+baseUri: http://127.0.0.1:5000
+mediaType: application/json
+
+types:
+  Book:
+    type: object
+    properties:
+      id: integer
+      title: string
+      author: string
+
+  BookInput:
+    type: object
+    properties:
+      title: string
+      author: string
+    required: [title, author]
+
+  Error:
+    type: object
+    properties:
+      error: string
+
+  Message:
+    type: object
+    properties:
+      message: string
+
+  BooksResponse:
+    type: object
+    properties:
+      data: Book[]
+
+/api/v1/books:
+  get:
+    description: Get all books
+    responses:
+      200:
+        body:
+          type: BooksResponse
+
+  post:
+    description: Create a new book
+    body:
+      type: BookInput
+    responses:
+      201:
+        body:
+          type: Book
+      400:
+        body:
+          type: Error
+
+/api/v1/books/{book_id}:
+  uriParameters:
+    book_id:
+      type: integer
+      required: true
+
+  get:
+    description: Get book by id
+    responses:
+      200:
+        body:
+          type: Book
+      404:
+        body:
+          type: Error
+
+  put:
+    description: Update book by id
+    body:
+      type: BookInput
+    responses:
+      200:
+        body:
+          type: Book
+      400:
+        body:
+          type: Error
+      404:
+        body:
+          type: Error
+
+  delete:
+    description: Delete book by id
+    responses:
+      200:
+        body:
+          type: Message
+      404:
+        body:
+          type: Error

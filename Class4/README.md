@@ -35,3 +35,19 @@ Thu muc nay chua bai demo API CRUD cho sach trong `Class4/demo`, su dung Flask v
 - POST /api/v1/books
 - PUT /api/v1/books/{book_id}
 - DELETE /api/v1/books/{book_id}
+
+## Bai so sanh tai lieu API
+
+Da bo sung folder openapi-comparison trong Class4 theo yeu cau bai tap.
+
+- Tong quan: openapi-comparison/README.md
+- OpenAPI: openapi-comparison/openapi/
+- API Blueprint: openapi-comparison/api-blueprint/
+- RAML: openapi-comparison/raml/
+- TypeSpec: openapi-comparison/typespec/
+
+Moi folder con deu co:
+
+- 1 file tai lieu API tuong ung
+- 1 README huong dan cai dat va chay
+- Huong dan demo sinh code/test tu file tai lieu API

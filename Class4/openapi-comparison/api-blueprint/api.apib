@@ -1,0 +1,111 @@
+FORMAT: 1A
+HOST: http://127.0.0.1:5000
+
+# Library API - API Blueprint
+
+Small library management API for comparison demo.
+
+# Group Books
+
+## Books Collection [/api/v1/books]
+
+### Get all books [GET]
+
++ Response 200 (application/json)
+
+        {
+          "data": [
+            {
+              "id": 1,
+              "title": "Clean Code",
+              "author": "Robert C. Martin"
+            }
+          ]
+        }
+
+### Create a new book [POST]
+
++ Request (application/json)
+
+        {
+          "title": "Domain-Driven Design",
+          "author": "Eric Evans"
+        }
+
++ Response 201 (application/json)
+
+        {
+          "id": 3,
+          "title": "Domain-Driven Design",
+          "author": "Eric Evans"
+        }
+
++ Response 400 (application/json)
+
+        {
+          "error": "title and author are required"
+        }
+
+## Book [/api/v1/books/{book_id}]
+
++ Parameters
+    + book_id: 1 (number, required) - Book id
+
+### Get book by id [GET]
+
++ Response 200 (application/json)
+
+        {
+          "id": 1,
+          "title": "Clean Code",
+          "author": "Robert C. Martin"
+        }
+
++ Response 404 (application/json)
+
+        {
+          "error": "Not found"
+        }
+
+### Update book by id [PUT]
+
++ Request (application/json)
+
+        {
+          "title": "Clean Architecture",
+          "author": "Robert C. Martin"
+        }
+
++ Response 200 (application/json)
+
+        {
+          "id": 1,
+          "title": "Clean Architecture",
+          "author": "Robert C. Martin"
+        }
+
++ Response 400 (application/json)
+
+        {
+          "error": "title and author are required"
+        }
+
++ Response 404 (application/json)
+
+        {
+          "error": "Not found"
+        }
+
+### Delete book by id [DELETE]
+
++ Response 200 (application/json)
+
+        {
+          "message": "Deleted"
+        }
+
++ Response 404 (application/json)
+
+        {
+          "error": "Not found"
+        }
