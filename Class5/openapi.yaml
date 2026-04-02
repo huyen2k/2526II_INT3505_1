@@ -85,3 +85,39 @@ paths:
       responses:
         200:
           description: Deleted
+
+  /users/{user_id}/orders:
+    get:
+      summary: Get orders of a user with multiple pagination strategies
+      description: Supports page-based, offset-limit, and cursor pagination via query params.
+      parameters:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+        - name: strategy
+          in: query
+          type: string
+          enum: [page, offset, cursor]
+          description: Choose pagination strategy
+        - name: page
+          in: query
+          type: integer
+          description: Used when strategy=page
+        - name: offset
+          in: query
+          type: integer
+          description: Used when strategy=offset
+        - name: limit
+          in: query
+          type: integer
+          description: Number of items per page/chunk
+        - name: cursor
+          in: query
+          type: string
+          description: Last seen order id, used when strategy=cursor
+      responses:
+        200:
+          description: OK
+        404:
+          description: User not found

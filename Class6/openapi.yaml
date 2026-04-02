@@ -25,7 +25,25 @@ paths:
                 type: string
       responses:
         200:
-          description: Token returned
+          description: Tokens returned
+          schema:
+            type: object
+            properties:
+              token_type:
+                type: string
+                example: Bearer
+              bearer_token:
+                type: string
+              refresh_token:
+                type: string
+              scopes:
+                type: array
+                items:
+                  type: string
+              roles:
+                type: array
+                items:
+                  type: string
 
   /profile:
     get:

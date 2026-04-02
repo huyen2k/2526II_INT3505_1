@@ -3,7 +3,7 @@ from functools import wraps
 from flasgger import Swagger
 
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, g
 import jwt
 
 app = Flask(__name__)
@@ -14,15 +14,26 @@ SECRET_KEY = "mysecretkey"
 
 # Fake user
 users = [
-    {"id": 1, "username": "admin", "password": "123456"}
+    {
+        "id": 1,
+        "username": "admin",
+        "password": "123456",
+        "roles": ["admin"],
+        "scopes": ["profile:read", "token:refresh"]
+    }
 ]
 
 
 # ====== JWT helper ======
-def generate_token(user):
+def generate_token(user, token_type="access"):
+    expires_in = datetime.timedelta(
+        minutes=30) if token_type == "access" else datetime.timedelta(days=7)
     payload = {
         "user_id": user["id"],
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+        "roles": user.get("roles", []),
+        "scopes": user.get("scopes", []),
+        "type": token_type,
+        "exp": datetime.datetime.utcnow() + expires_in
     }
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
@@ -38,7 +49,9 @@ def token_required(f):
         try:
             token = token.split(" ")[1]
             data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-            request.user = data
+            if data.get("type") != "access":
+                return {"error": "Invalid token type"}, 401
+            g.user = data
         except:
             return {"error": "Invalid token"}, 401
 
@@ -56,8 +69,15 @@ def login():
 
     for user in users:
         if user["username"] == data.get("username") and user["password"] == data.get("password"):
-            token = generate_token(user)
-            return jsonify({"access_token": token})
+            bearer_token = generate_token(user, token_type="access")
+            refresh_token = generate_token(user, token_type="refresh")
+            return jsonify({
+                "token_type": "Bearer",
+                "bearer_token": bearer_token,
+                "refresh_token": refresh_token,
+                "scopes": user.get("scopes", []),
+                "roles": user.get("roles", [])
+            })
 
     return {"error": "Invalid credentials"}, 401
 
@@ -68,7 +88,7 @@ def login():
 def profile():
     return jsonify({
         "message": "Access granted",
-        "user": request.user
+        "user": g.user
     })
 
 
