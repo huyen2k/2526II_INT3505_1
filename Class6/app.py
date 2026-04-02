@@ -38,6 +38,13 @@ def generate_token(user, token_type="access"):
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
 
+def find_user_by_id(user_id):
+    for user in users:
+        if user["id"] == user_id:
+            return user
+    return None
+
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -58,6 +65,30 @@ def token_required(f):
         return f(*args, **kwargs)
 
     return decorated
+
+
+def scope_required(required_scope):
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            scopes = g.user.get("scopes", [])
+            if required_scope not in scopes:
+                return {"error": "Insufficient scope"}, 403
+            return f(*args, **kwargs)
+        return decorated
+    return decorator
+
+
+def role_required(required_role):
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            roles = g.user.get("roles", [])
+            if required_role not in roles:
+                return {"error": "Forbidden role"}, 403
+            return f(*args, **kwargs)
+        return decorated
+    return decorator
 
 
 # ====== API ======
@@ -82,12 +113,61 @@ def login():
     return {"error": "Invalid credentials"}, 401
 
 
+@app.route("/api/v1/refresh", methods=["POST"])
+def refresh():
+    data = request.json or {}
+    refresh_token = data.get("refresh_token")
+
+    if not refresh_token:
+        return {"error": "refresh_token is required"}, 400
+
+    try:
+        payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=["HS256"])
+        if payload.get("type") != "refresh":
+            return {"error": "Invalid token type"}, 401
+
+        user = find_user_by_id(payload.get("user_id"))
+        if not user:
+            return {"error": "User not found"}, 404
+
+        if "token:refresh" not in payload.get("scopes", []):
+            return {"error": "Insufficient scope"}, 403
+
+        new_access_token = generate_token(user, token_type="access")
+        return jsonify({
+            "token_type": "Bearer",
+            "bearer_token": new_access_token
+        })
+    except:
+        return {"error": "Invalid token"}, 401
+
+
 # Protected route
 @app.route("/api/v1/profile", methods=["GET"])
 @token_required
 def profile():
     return jsonify({
         "message": "Access granted",
+        "user": g.user
+    })
+
+
+@app.route("/api/v1/profile-scope", methods=["GET"])
+@token_required
+@scope_required("profile:read")
+def profile_scope():
+    return jsonify({
+        "message": "Scope check passed",
+        "user": g.user
+    })
+
+
+@app.route("/api/v1/admin", methods=["GET"])
+@token_required
+@role_required("admin")
+def admin_only():
+    return jsonify({
+        "message": "Role check passed",
         "user": g.user
     })
 

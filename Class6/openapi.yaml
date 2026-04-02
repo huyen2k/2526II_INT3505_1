@@ -54,6 +54,53 @@ paths:
         200:
           description: Success
 
+  /refresh:
+    post:
+      summary: Get new bearer token from refresh token
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            required:
+              - refresh_token
+            properties:
+              refresh_token:
+                type: string
+      responses:
+        200:
+          description: New bearer token returned
+          schema:
+            type: object
+            properties:
+              token_type:
+                type: string
+                example: Bearer
+              bearer_token:
+                type: string
+
+  /profile-scope:
+    get:
+      summary: Profile endpoint requiring profile:read scope
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Scope check passed
+        403:
+          description: Insufficient scope
+
+  /admin:
+    get:
+      summary: Admin endpoint requiring admin role
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Role check passed
+        403:
+          description: Forbidden role
+
 securityDefinitions:
   Bearer:
     type: apiKey
