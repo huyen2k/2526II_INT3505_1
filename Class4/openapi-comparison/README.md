@@ -14,12 +14,16 @@ Muc tieu: so sanh 4 dinh dang tai lieu hoa API va demo sinh code/test tu dac ta 
 ## Cau truc
 
 - openapi/openapi.yaml
+- openapi/app.py
 - openapi/README.md
 - api-blueprint/api.apib
+- api-blueprint/app.py
 - api-blueprint/README.md
 - raml/api.raml
+- raml/app.py
 - raml/README.md
 - typespec/main.tsp
+- typespec/app.py
 - typespec/tspconfig.yaml
 - typespec/README.md
 
@@ -39,6 +43,8 @@ pip install -r requirements.txt
 python app.py
 
 Server mac dinh: http://127.0.0.1:5000
+
+De chay lan luot cac demo trong comparison, mo file [run-apis.cmd](run-apis.cmd).
 
 ## Demo sinh code/test tu dac ta API
 
