@@ -1,0 +1,141 @@
+swagger: '2.0'
+info:
+  title: Product API
+  version: 1.0.0
+  description: Swagger 2.0 spec used to demonstrate Swagger Codegen
+host: localhost:5000
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /api/v1/products:
+    get:
+      summary: Get all products
+      tags:
+        - Products
+      responses:
+        '200':
+          description: List of products
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+    post:
+      summary: Create a product
+      tags:
+        - Products
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateProductInput'
+      responses:
+        '201':
+          description: Created product
+          schema:
+            $ref: '#/definitions/Product'
+        '400':
+          description: Invalid request body
+  /api/v1/products/{product_id}:
+    get:
+      summary: Get product by ID
+      tags:
+        - Products
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Product detail
+          schema:
+            $ref: '#/definitions/Product'
+        '404':
+          description: Product not found
+    put:
+      summary: Update product by ID
+      tags:
+        - Products
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateProductInput'
+      responses:
+        '200':
+          description: Updated product
+          schema:
+            $ref: '#/definitions/Product'
+        '400':
+          description: Invalid request body
+        '404':
+          description: Product not found
+    delete:
+      summary: Delete product by ID
+      tags:
+        - Products
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Product not found
+definitions:
+  Product:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      price:
+        type: number
+      in_stock:
+        type: boolean
+    required:
+      - id
+      - name
+      - price
+      - in_stock
+  CreateProductInput:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      price:
+        type: number
+      in_stock:
+        type: boolean
+    required:
+      - name
+      - price
+  UpdateProductInput:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      price:
+        type: number
+      in_stock:
+        type: boolean
